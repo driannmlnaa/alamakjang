@@ -1,0 +1,1176 @@
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local StarterGui = game:GetService("StarterGui")
+local TweenService = game:GetService("TweenService")
+
+local player = Players.LocalPlayer
+
+local screenGui
+local infoGuiDisplayed = false
+
+local mainFrame
+local crystalButton
+local runeButton
+local closeButton
+local logoButton
+
+local lastPosition = UDim2.new(0.5, -105, 0.36, -65)
+
+local resetCooldown = false
+local runeRunning = false
+
+local tableOpen = true
+
+--------------------------------------------------
+-- CRYSTAL
+-- LOGIC ASLI TIDAK DIUBAH
+--------------------------------------------------
+
+local function showNotification()
+    pcall(function()
+        StarterGui:SetCore("SendNotification", {
+            Title = "Try to Die detected",
+            Text = "Adding 6 seconds cooldown to avoid anti-cheat...",
+            Duration = 3
+        })
+    end)
+end
+
+--------------------------------------------------
+-- RUNE
+-- LOGIC ASLI TIDAK DIUBAH
+--------------------------------------------------
+
+local Event = game:GetService("ReplicatedStorage").Remotes.CrystalDropRequest
+
+local runes = {
+    "Haste Rune",
+    "Storm Rune",
+    "Weight Rune",
+    "Fortune Rune",
+    "Detonation Rune",
+    "Preservation Rune",
+    "Warmth Rune",
+    "Excavator Rune",
+    "Colossus Rune"
+}
+
+local function startRune()
+
+    if runeRunning then
+        return
+    end
+
+    runeRunning = true
+
+    task.spawn(function()
+
+        while runeRunning do
+
+            for _, rune in ipairs(runes) do
+                Event:FireServer(rune)
+            end
+
+            task.wait()
+
+        end
+
+    end)
+
+end
+
+--------------------------------------------------
+-- BUTTON STYLE
+--------------------------------------------------
+
+local function styleButton(button)
+
+    button.BackgroundColor3 =
+        Color3.fromRGB(
+            105,
+            70,
+            210
+        )
+
+    button.BorderSizePixel = 0
+    button.AutoButtonColor = false
+
+    button.TextColor3 =
+        Color3.fromRGB(
+            255,
+            255,
+            255
+        )
+
+    button.Font =
+        Enum.Font.GothamBold
+
+    button.TextSize = 21
+
+    --------------------------------------------------
+    -- ROUNDED 20
+    --------------------------------------------------
+
+    local corner =
+        Instance.new("UICorner")
+
+    corner.CornerRadius =
+        UDim.new(
+            0,
+            20
+        )
+
+    corner.Parent = button
+
+    --------------------------------------------------
+    -- THIN OUTLINE
+    --------------------------------------------------
+
+    local stroke =
+        Instance.new("UIStroke")
+
+    stroke.Name =
+        "WhiteStroke"
+
+    stroke.Color =
+        Color3.fromRGB(
+            255,
+            255,
+            255
+        )
+
+    stroke.Thickness = 1.5
+    stroke.Transparency = 0.15
+
+    stroke.ApplyStrokeMode =
+        Enum.ApplyStrokeMode.Border
+
+    stroke.Parent = button
+
+    --------------------------------------------------
+    -- BUTTON GRADIENT
+    --------------------------------------------------
+
+    local gradient =
+        Instance.new("UIGradient")
+
+    gradient.Name =
+        "PurplePinkGradient"
+
+    gradient.Color =
+        ColorSequence.new({
+
+            ColorSequenceKeypoint.new(
+                0,
+                Color3.fromRGB(
+                    78,
+                    55,
+                    220
+                )
+            ),
+
+            ColorSequenceKeypoint.new(
+                0.5,
+                Color3.fromRGB(
+                    120,
+                    65,
+                    205
+                )
+            ),
+
+            ColorSequenceKeypoint.new(
+                1,
+                Color3.fromRGB(
+                    180,
+                    75,
+                    185
+                )
+            )
+
+        })
+
+    gradient.Rotation = 0
+
+    gradient.Parent = button
+
+end
+
+--------------------------------------------------
+-- CREATE GUI
+--------------------------------------------------
+
+local function createGui()
+
+    if screenGui then
+        screenGui:Destroy()
+    end
+
+    --------------------------------------------------
+    -- SCREEN GUI
+    --------------------------------------------------
+
+    screenGui =
+        Instance.new("ScreenGui")
+
+    screenGui.Name =
+        "ResetButtonGui"
+
+    screenGui.ResetOnSpawn =
+        false
+
+    screenGui.Parent =
+        player:WaitForChild(
+            "PlayerGui"
+        )
+
+    --------------------------------------------------
+    -- MAIN TABLE
+    --------------------------------------------------
+
+    mainFrame =
+        Instance.new("Frame")
+
+    mainFrame.Name =
+        "MainTable"
+
+    mainFrame.Size =
+        UDim2.new(
+            0,
+            210,
+            0,
+            142
+        )
+
+    mainFrame.Position =
+        lastPosition
+
+    --------------------------------------------------
+    -- DARK PURPLE BACKGROUND
+    --------------------------------------------------
+
+    mainFrame.BackgroundColor3 =
+        Color3.fromRGB(
+            48,
+            40,
+            72
+        )
+
+    mainFrame.BackgroundTransparency =
+        0
+
+    mainFrame.BorderSizePixel =
+        0
+
+    mainFrame.Parent =
+        screenGui
+
+    --------------------------------------------------
+    -- TABLE ROUNDED
+    --------------------------------------------------
+
+    local tableCorner =
+        Instance.new("UICorner")
+
+    tableCorner.CornerRadius =
+        UDim.new(
+            0,
+            8
+        )
+
+    tableCorner.Parent =
+        mainFrame
+
+    --------------------------------------------------
+    -- TABLE STROKE
+    --------------------------------------------------
+
+    local tableStroke =
+        Instance.new("UIStroke")
+
+    tableStroke.Name =
+        "TableStroke"
+
+    tableStroke.Color =
+        Color3.fromRGB(
+            220,
+            205,
+            255
+        )
+
+    tableStroke.Thickness =
+        1.5
+
+    tableStroke.Transparency =
+        0.05
+
+    tableStroke.Parent =
+        mainFrame
+
+    --------------------------------------------------
+    -- TABLE GRADIENT
+    --------------------------------------------------
+
+    local tableGradient =
+        Instance.new("UIGradient")
+
+    tableGradient.Name =
+        "TableGradient"
+
+    tableGradient.Color =
+        ColorSequence.new({
+
+            ColorSequenceKeypoint.new(
+                0,
+                Color3.fromRGB(
+                    58,
+                    48,
+                    95
+                )
+            ),
+
+            ColorSequenceKeypoint.new(
+                0.5,
+                Color3.fromRGB(
+                    66,
+                    45,
+                    88
+                )
+            ),
+
+            ColorSequenceKeypoint.new(
+                1,
+                Color3.fromRGB(
+                    82,
+                    48,
+                    78
+                )
+            )
+
+        })
+
+    tableGradient.Rotation = 0
+
+    tableGradient.Parent =
+        mainFrame
+
+    --------------------------------------------------
+    -- HEADER TITLE
+    --------------------------------------------------
+
+    local title =
+        Instance.new("TextLabel")
+
+    title.Name =
+        "Title"
+
+    title.Size =
+        UDim2.new(
+            1,
+            -45,
+            0,
+            30
+        )
+
+    title.Position =
+        UDim2.new(
+            0,
+            12,
+            0,
+            3
+        )
+
+    title.BackgroundTransparency =
+        1
+
+    title.Text =
+        "I LOVE MALTE"
+
+    title.TextColor3 =
+        Color3.fromRGB(
+            255,
+            255,
+            255
+        )
+
+    title.Font =
+        Enum.Font.GothamBold
+
+    title.TextSize =
+        17
+
+    title.TextXAlignment =
+        Enum.TextXAlignment.Left
+
+    title.Parent =
+        mainFrame
+
+    --------------------------------------------------
+    -- CLOSE X
+    --------------------------------------------------
+
+    closeButton =
+        Instance.new("TextButton")
+
+    closeButton.Name =
+        "CloseButton"
+
+    closeButton.Size =
+        UDim2.new(
+            0,
+            28,
+            0,
+            28
+        )
+
+    closeButton.Position =
+        UDim2.new(
+            1,
+            -33,
+            0,
+            4
+        )
+
+    closeButton.Text =
+        "×"
+
+    closeButton.Font =
+        Enum.Font.GothamBold
+
+    closeButton.TextSize =
+        24
+
+    closeButton.TextColor3 =
+        Color3.fromRGB(
+            255,
+            255,
+            255
+        )
+
+    closeButton.BackgroundTransparency =
+        1
+
+    closeButton.AutoButtonColor =
+        false
+
+    closeButton.Parent =
+        mainFrame
+
+    --------------------------------------------------
+    -- CRYSTAL BUTTON
+    --------------------------------------------------
+
+    crystalButton =
+        Instance.new("TextButton")
+
+    crystalButton.Name =
+        "CrystalButton"
+
+    crystalButton.Size =
+        UDim2.new(
+            0,
+            190,
+            0,
+            45
+        )
+
+    crystalButton.Position =
+        UDim2.new(
+            0,
+            10,
+            0,
+            35
+        )
+
+    crystalButton.Text =
+        "CRYSTAL"
+
+    crystalButton.Parent =
+        mainFrame
+
+    styleButton(
+        crystalButton
+    )
+
+    --------------------------------------------------
+    -- RUNE BUTTON
+    --------------------------------------------------
+
+    runeButton =
+        Instance.new("TextButton")
+
+    runeButton.Name =
+        "RuneButton"
+
+    runeButton.Size =
+        UDim2.new(
+            0,
+            190,
+            0,
+            45
+        )
+
+    runeButton.Position =
+        UDim2.new(
+            0,
+            10,
+            0,
+            86
+        )
+
+    runeButton.Text =
+        "RUNE"
+
+    runeButton.Parent =
+        mainFrame
+
+    styleButton(
+        runeButton
+    )
+
+    --------------------------------------------------
+    -- LOGO D
+    --------------------------------------------------
+
+    logoButton =
+        Instance.new("TextButton")
+
+    logoButton.Name =
+        "LogoD"
+
+    logoButton.Size =
+        UDim2.new(
+            0,
+            48,
+            0,
+            48
+        )
+
+    logoButton.Position =
+        lastPosition
+
+    logoButton.Text =
+        "D"
+
+    logoButton.Font =
+        Enum.Font.GothamBold
+
+    logoButton.TextSize =
+        27
+
+    logoButton.TextColor3 =
+        Color3.fromRGB(
+            255,
+            255,
+            255
+        )
+
+    logoButton.BackgroundColor3 =
+        Color3.fromRGB(
+            85,
+            60,
+            190
+        )
+
+    logoButton.BorderSizePixel =
+        0
+
+    logoButton.AutoButtonColor =
+        false
+
+    logoButton.Visible =
+        false
+
+    logoButton.Parent =
+        screenGui
+
+    --------------------------------------------------
+    -- LOGO GRADIENT
+    --------------------------------------------------
+
+    local logoGradient =
+        Instance.new("UIGradient")
+
+    logoGradient.Color =
+        ColorSequence.new({
+
+            ColorSequenceKeypoint.new(
+                0,
+                Color3.fromRGB(
+                    78,
+                    55,
+                    220
+                )
+            ),
+
+            ColorSequenceKeypoint.new(
+                1,
+                Color3.fromRGB(
+                    180,
+                    75,
+                    185
+                )
+            )
+
+        })
+
+    logoGradient.Parent =
+        logoButton
+
+    --------------------------------------------------
+    -- LOGO STROKE
+    --------------------------------------------------
+
+    local logoStroke =
+        Instance.new("UIStroke")
+
+    logoStroke.Color =
+        Color3.fromRGB(
+            230,
+            220,
+            255
+        )
+
+    logoStroke.Thickness =
+        1.5
+
+    logoStroke.Transparency =
+        0.1
+
+    logoStroke.Parent =
+        logoButton
+
+    --------------------------------------------------
+    -- LOGO ROUNDED
+    --------------------------------------------------
+
+    local logoCorner =
+        Instance.new("UICorner")
+
+    logoCorner.CornerRadius =
+        UDim.new(
+            0,
+            12
+        )
+
+    logoCorner.Parent =
+        logoButton
+
+    --------------------------------------------------
+    -- DRAG MAIN TABLE
+    --------------------------------------------------
+
+    local dragging = false
+    local dragStart
+    local startPos
+
+    mainFrame.InputBegan:Connect(
+        function(input)
+
+            if input.UserInputType ==
+                Enum.UserInputType.MouseButton1
+
+                or input.UserInputType ==
+                Enum.UserInputType.Touch then
+
+                dragging = true
+
+                dragStart =
+                    input.Position
+
+                startPos =
+                    mainFrame.Position
+
+            end
+
+        end
+    )
+
+    mainFrame.InputEnded:Connect(
+        function(input)
+
+            if input.UserInputType ==
+                Enum.UserInputType.MouseButton1
+
+                or input.UserInputType ==
+                Enum.UserInputType.Touch then
+
+                dragging = false
+
+            end
+
+        end
+    )
+
+    UserInputService.InputChanged:Connect(
+        function(input)
+
+            if not dragging then
+                return
+            end
+
+            if input.UserInputType ==
+                Enum.UserInputType.MouseMovement
+
+                or input.UserInputType ==
+                Enum.UserInputType.Touch then
+
+                local delta =
+                    input.Position -
+                    dragStart
+
+                local newPosition =
+                    UDim2.new(
+
+                        startPos.X.Scale,
+
+                        startPos.X.Offset +
+                            delta.X,
+
+                        startPos.Y.Scale,
+
+                        startPos.Y.Offset +
+                            delta.Y
+
+                    )
+
+                mainFrame.Position =
+                    newPosition
+
+                lastPosition =
+                    newPosition
+
+            end
+
+        end
+    )
+
+    --------------------------------------------------
+    -- DRAG LOGO D
+    --------------------------------------------------
+
+    local logoDragging = false
+    local logoDragStart
+    local logoStartPos
+
+    logoButton.InputBegan:Connect(
+        function(input)
+
+            if input.UserInputType ==
+                Enum.UserInputType.MouseButton1
+
+                or input.UserInputType ==
+                Enum.UserInputType.Touch then
+
+                logoDragging = true
+
+                logoDragStart =
+                    input.Position
+
+                logoStartPos =
+                    logoButton.Position
+
+            end
+
+        end
+    )
+
+    logoButton.InputEnded:Connect(
+        function(input)
+
+            if input.UserInputType ==
+                Enum.UserInputType.MouseButton1
+
+                or input.UserInputType ==
+                Enum.UserInputType.Touch then
+
+                logoDragging = false
+
+                lastPosition =
+                    logoButton.Position
+
+            end
+
+        end
+    )
+
+    UserInputService.InputChanged:Connect(
+        function(input)
+
+            if not logoDragging then
+                return
+            end
+
+            if input.UserInputType ==
+                Enum.UserInputType.MouseMovement
+
+                or input.UserInputType ==
+                Enum.UserInputType.Touch then
+
+                local delta =
+                    input.Position -
+                    logoDragStart
+
+                local newPosition =
+                    UDim2.new(
+
+                        logoStartPos.X.Scale,
+
+                        logoStartPos.X.Offset +
+                            delta.X,
+
+                        logoStartPos.Y.Scale,
+
+                        logoStartPos.Y.Offset +
+                            delta.Y
+
+                    )
+
+                logoButton.Position =
+                    newPosition
+
+                lastPosition =
+                    newPosition
+
+            end
+
+        end
+    )
+
+    --------------------------------------------------
+    -- CLOSE TABLE
+    --------------------------------------------------
+
+    closeButton.MouseButton1Click:Connect(
+        function()
+
+            tableOpen = false
+
+            mainFrame.Visible =
+                false
+
+            logoButton.Position =
+                lastPosition
+
+            logoButton.Visible =
+                true
+
+        end
+    )
+
+    --------------------------------------------------
+    -- OPEN TABLE
+    --------------------------------------------------
+
+    logoButton.MouseButton1Click:Connect(
+        function()
+
+            tableOpen = true
+
+            logoButton.Visible =
+                false
+
+            mainFrame.Position =
+                lastPosition
+
+            mainFrame.Visible =
+                true
+
+        end
+    )
+
+    --------------------------------------------------
+    -- CRYSTAL CLICK
+    -- LOGIC ASLI
+    --------------------------------------------------
+
+    crystalButton.MouseButton1Click:Connect(
+        function()
+
+            if resetCooldown then
+                return
+            end
+
+            resetCooldown = true
+
+            player.Character:BreakJoints()
+
+            wait(6)
+
+            resetCooldown = false
+
+        end
+    )
+
+    --------------------------------------------------
+    -- RUNE CLICK
+    -- LOGIC ASLI
+    --------------------------------------------------
+
+    runeButton.MouseButton1Click:Connect(
+        function()
+
+            startRune()
+
+        end
+    )
+
+    --------------------------------------------------
+    -- DEFAULT
+    --------------------------------------------------
+
+    screenGui.Enabled =
+        false
+
+end
+
+--------------------------------------------------
+-- INFO GUI
+--------------------------------------------------
+
+local function createInfoGui()
+
+    if infoGuiDisplayed
+        or UserInputService.TouchEnabled then
+
+        createGui()
+
+        screenGui.Enabled =
+            true
+
+        return
+    end
+
+    infoGuiDisplayed =
+        true
+
+    local infoGui =
+        Instance.new("ScreenGui")
+
+    infoGui.Name =
+        "InfoGui"
+
+    infoGui.Parent =
+        player:WaitForChild(
+            "PlayerGui"
+        )
+
+    local frame =
+        Instance.new("Frame")
+
+    frame.Size =
+        UDim2.new(
+            0,
+            350,
+            0,
+            200
+        )
+
+    frame.Position =
+        UDim2.new(
+            0.5,
+            -175,
+            0.5,
+            -100
+        )
+
+    frame.BackgroundColor3 =
+        Color3.fromRGB(
+            40,
+            40,
+            40
+        )
+
+    frame.Parent =
+        infoGui
+
+    local textLabel =
+        Instance.new("TextLabel")
+
+    textLabel.Size =
+        UDim2.new(
+            1,
+            0,
+            0.4,
+            0
+        )
+
+    textLabel.Position =
+        UDim2.new(
+            0,
+            0,
+            0.2,
+            0
+        )
+
+    textLabel.Text =
+        "Press F to toggle"
+
+    textLabel.TextColor3 =
+        Color3.fromRGB(
+            255,
+            255,
+            255
+        )
+
+    textLabel.Font =
+        Enum.Font.GothamBold
+
+    textLabel.TextSize =
+        28
+
+    textLabel.BackgroundTransparency =
+        1
+
+    textLabel.Parent =
+        frame
+
+    local okButton =
+        Instance.new("TextButton")
+
+    okButton.Size =
+        UDim2.new(
+            0.6,
+            0,
+            0.3,
+            0
+        )
+
+    okButton.Position =
+        UDim2.new(
+            0.2,
+            0,
+            0.55,
+            0
+        )
+
+    okButton.Text =
+        "OK"
+
+    okButton.BackgroundColor3 =
+        Color3.fromRGB(
+            0,
+            122,
+            255
+        )
+
+    okButton.TextColor3 =
+        Color3.fromRGB(
+            255,
+            255,
+            255
+        )
+
+    okButton.Font =
+        Enum.Font.GothamBold
+
+    okButton.TextSize =
+        22
+
+    okButton.Parent =
+        frame
+
+    local uiCorner =
+        Instance.new("UICorner")
+
+    uiCorner.CornerRadius =
+        UDim.new(
+            0,
+            10
+        )
+
+    uiCorner.Parent =
+        okButton
+
+    okButton.MouseButton1Click:Connect(
+        function()
+
+            infoGui:Destroy()
+
+            createGui()
+
+            screenGui.Enabled =
+                true
+
+        end
+    )
+
+end
+
+--------------------------------------------------
+-- TOGGLE UI
+--------------------------------------------------
+
+local function toggleUI()
+
+    if screenGui then
+
+        screenGui.Enabled =
+            not screenGui.Enabled
+
+    end
+
+end
+
+--------------------------------------------------
+-- F TOGGLE
+--------------------------------------------------
+
+UserInputService.InputBegan:Connect(
+    function(
+        input,
+        gameProcessed
+    )
+
+        if not gameProcessed
+            and input.KeyCode ==
+                Enum.KeyCode.F then
+
+            toggleUI()
+
+        end
+
+    end
+)
+
+--------------------------------------------------
+-- CHARACTER ADDED
+--------------------------------------------------
+
+player.CharacterAdded:Connect(
+    function()
+
+        if player:FindFirstChild(
+            "PlayerGui"
+        ) then
+
+            if player.PlayerGui:FindFirstChild(
+                "ResetButtonGui"
+            ) then
+
+                player.PlayerGui.ResetButtonGui:Destroy()
+
+            end
+
+        end
+
+        createInfoGui()
+
+    end
+)
+
+--------------------------------------------------
+-- NOTIFICATION
+--------------------------------------------------
+
+if game.PlaceId ==
+    5901548022 then
+
+    showNotification()
+
+end
+
+--------------------------------------------------
+-- START
+--------------------------------------------------
+
+createInfoGui()
