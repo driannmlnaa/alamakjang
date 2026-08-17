@@ -1,0 +1,228 @@
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local StarterGui = game:GetService("StarterGui")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local player = Players.LocalPlayer
+
+local screenGui
+local mainTable
+local crystalButton
+local runeButton
+local closeButton
+local logoD
+
+local runeSelection
+local runeClose
+
+local lastPosition = UDim2.new(0.5, -95, 0.36, -65)
+
+local resetCooldown = false
+local runeRunning = false
+
+--==================================================
+-- RUNE LIST
+--==================================================
+
+local runes = {
+    {
+        display = "Haste",
+        remote = "Haste Rune"
+    },
+    {
+        display = "Storm",
+        remote = "Storm Rune"
+    },
+    {
+        display = "Weight",
+        remote = "Weight Rune"
+    },
+    {
+        display = "Fortune",
+        remote = "Fortune Rune"
+    },
+    {
+        display = "Detonation",
+        remote = "Detonation Rune"
+    },
+    {
+        display = "Preservation",
+        remote = "Preservation Rune"
+    },
+    {
+        display = "Warmth",
+        remote = "Warmth Rune"
+    },
+    {
+        display = "Excavator",
+        remote = "Excavator Rune"
+    },
+    {
+        display = "Colossus",
+        remote = "Colossus Rune"
+    }
+}
+
+--==================================================
+-- RUNE SELECTION STATE
+--==================================================
+
+local selectedRunes = {
+    ["Haste Rune"] = false,
+    ["Storm Rune"] = false,
+    ["Weight Rune"] = false,
+    ["Fortune Rune"] = false,
+    ["Detonation Rune"] = false,
+    ["Preservation Rune"] = false,
+    ["Warmth Rune"] = false,
+    ["Excavator Rune"] = false,
+    ["Colossus Rune"] = false
+}
+
+local runeButtons = {}
+
+--==================================================
+-- REMOTE
+--==================================================
+
+local runeEvent = ReplicatedStorage
+    :WaitForChild("Remotes")
+    :WaitForChild("CrystalDropRequest")
+
+--==================================================
+-- NOTIFICATION
+--==================================================
+
+local function showAntiCheatNotification()
+
+    pcall(function()
+
+        StarterGui:SetCore("SendNotification", {
+            Title = "Try to Die detected",
+            Text = "Adding 6 seconds cooldown to avoid anti-cheat...",
+            Duration = 3
+        })
+
+    end)
+
+end
+
+--==================================================
+-- RUN SELECTED RUNES
+--==================================================
+
+local function runSelectedRunes()
+
+    if runeRunning then
+        return
+    end
+
+    runeRunning = true
+
+    task.spawn(function()
+
+        while true do
+
+            if not runeRunning then
+                break
+            end
+
+            if selectedRunes["Haste Rune"] then
+                runeEvent:FireServer("Haste Rune")
+            end
+
+            if selectedRunes["Storm Rune"] then
+                runeEvent:FireServer("Storm Rune")
+            end
+
+            if selectedRunes["Weight Rune"] then
+                runeEvent:FireServer("Weight Rune")
+            end
+
+            if selectedRunes["Fortune Rune"] then
+                runeEvent:FireServer("Fortune Rune")
+            end
+
+            if selectedRunes["Detonation Rune"] then
+                runeEvent:FireServer("Detonation Rune")
+            end
+
+            if selectedRunes["Preservation Rune"] then
+                runeEvent:FireServer("Preservation Rune")
+            end
+
+            if selectedRunes["Warmth Rune"] then
+                runeEvent:FireServer("Warmth Rune")
+            end
+
+            if selectedRunes["Excavator Rune"] then
+                runeEvent:FireServer("Excavator Rune")
+            end
+
+            if selectedRunes["Colossus Rune"] then
+                runeEvent:FireServer("Colossus Rune")
+            end
+
+            task.wait(0)
+
+        end
+
+    end)
+
+end
+
+--==================================================
+-- MAIN BUTTON STYLE
+--==================================================
+
+local function styleButton(button)
+
+    button.BackgroundColor3 =
+        Color3.fromRGB(78, 55, 110)
+
+    button.BorderSizePixel = 0
+    button.AutoButtonColor = false
+
+    button.TextColor3 =
+        Color3.fromRGB(255, 255, 255)
+
+    button.Font =
+        Enum.Font.GothamBold
+
+    button.TextSize = 14
+
+    local corner =
+        Instance.new("UICorner")
+
+    corner.CornerRadius =
+        UDim.new(0, 9)
+
+    corner.Parent =
+        button
+
+    local stroke =
+        Instance.new("UIStroke")
+
+    stroke.Color =
+        Color3.fromRGB(220, 205, 255)
+
+    stroke.Thickness = 1
+    stroke.Transparency = 0.25
+
+    stroke.Parent =
+        button
+
+    local gradient =
+        Instance.new("UIGradient")
+
+    gradient.Color =
+        ColorSequence.new({
+
+            ColorSequenceKeypoint.new(
+                0,
+                Color3.fromRGB(65, 48, 100)
+            ),
+
+            ColorSequenceKeypoint.new(
+                0.5,
+                Color3.fromRGB(85, 55
